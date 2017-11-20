@@ -30,13 +30,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setTitle("InstaPost");
+
         userNameEditText = (EditText) findViewById(R.id.usernameEditText);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         alreadyMemberTextView = (TextView) findViewById(R.id.alreadyMemberTextView);
         signUpInButton = (Button) findViewById(R.id.signUpInButton);
 
         ParseUser user = ParseUser.getCurrentUser();
-        if (user.isAuthenticated()){
+        if (user != null){
             Log.i("isAuthenticated", "Authenticated ");
             showUsersList();
         }

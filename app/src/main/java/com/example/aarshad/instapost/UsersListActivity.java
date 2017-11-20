@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -45,9 +47,8 @@ public class UsersListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
 
-        usersListView = (ListView) findViewById(R.id.usersListView);
-        arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,usersList);
-        usersListView.setAdapter(arrayAdapter);
+        setTitle("User Feed");
+
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser.isAuthenticated()) {
             Toast.makeText(this, "User Is Logged In", Toast.LENGTH_SHORT).show();
@@ -55,6 +56,20 @@ public class UsersListActivity extends AppCompatActivity {
             Intent signUpIntent = new Intent(this, MainActivity.class );
             startActivity(signUpIntent);
         }
+
+        usersListView = (ListView) findViewById(R.id.usersListView);
+        arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,usersList);
+        usersListView.setAdapter(arrayAdapter);
+
+        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(),UserFeedActivity.class);
+                intent.putExtra("username",usersList.get(i));
+                startActivity(intent);
+            }
+        });
+
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.findInBackground(new FindCallback<ParseUser>() {
@@ -103,7 +118,13 @@ public class UsersListActivity extends AppCompatActivity {
             } else  {
                 getPhoto();
             }
+        } else if (item.getItemId() == R.id.logout){
+            ParseUser.logOut();
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
+
         }
+
         return super.onOptionsItemSelected(item);
     }
 
